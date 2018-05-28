@@ -1,25 +1,4 @@
 ---
-- name: "Install sample data: Prepare directory"
-  become: yes
-  become_user: root
-  file:
-    dest: "{{ project_path }}/../sample-data"
-    state: directory
-    recurse: yes
-    owner: "{{ www_user }}"
-    group: "{{ www_group }}"
-
-- name: "Install sample data: Clone Magento Sample Data"
-  git:
-    repo: "https://github.com/magento/magento2-sample-data.git"
-    dest: "{{ magento2_install_path }}/../sample-data"
-    version: "{{ magento2_branch }}"
-    depth: 1
-
-- name: "Install sample data : Link Magento Sample Data"
-  shell: >
-    php -f {{ magento2_install_path }}/../sample-data/dev/tools/build-sample-data.php -- --ce-source="{{ magento2_install_path }}"
-
 - name: "Install sample data : Deploy"
   shell: >
     {{ magento2_install_path }}/bin/magento sampledata:deploy

@@ -8,6 +8,11 @@
   shell: >
     {{ magento2_install_path }}/bin/magento indexer:reindex
 
-- name: "Post isntallation actions: Clear cache"
+- name: "Post installation actions: Clear cache"
   shell: >
     {{ magento2_install_path }}/bin/magento cache:clean
+- name: "Reload Nginx"
+  become: true
+  become_user: root
+  shell: >
+    service nginx restart
