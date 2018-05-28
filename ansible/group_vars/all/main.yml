@@ -1,5 +1,5 @@
-stage: "m4u"
-site_name: "Media4u Workshops"
+stage: "m2coach"
+site_name: "M2.coach Workshops"
 mage_admin_password: "password123"
 
 domain: "{{stage}}.magento.local"
@@ -56,8 +56,8 @@ magento2_base_url: "http://{{domain}}"
 magento2_base_url_secure: "https://{{domain}}"
 magento2_use_secure_admin: 0
 magento2_use_secure: 0
-magento2_auth_public_key: "0f071cac7eebb3db0b70710b23c6c94d"
-magento2_auth_private_key: "fda55775a6e3812fa9cac2c39ce4d5c6"
+magento2_auth_public_key: "xxxxx"
+magento2_auth_private_key: "xxxxx"
 
 # Variable for geerlingguy/mysql
 mysql_databases:
