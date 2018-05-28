@@ -10,7 +10,7 @@
 # Setup
 
 1. Inside `./environment/` directory execute `vagrant up`. In your VirtualBox GUI new box should be created `environment_default_abcdefghijklmnoqprstuw`
-2. Log in using SSH to new virtual machine (`vagrant ssh`), then change current user to `deployer`, using `sudo su deployer`. Enter `/ansible/` directory and run `ansible-playbook provision-system.yml -i development.ini`. Execution installs all the necessary dependencies to run the Magento and Magento itself.
+2. Log in using SSH to new virtual machine (`vagrant ssh`), then change current user to `deployer`, using `sudo su deployer`. Enter `/ansible/` directory. Get the latest external roles with `ansible-galaxy install -r roles.yml -p roles/` and run `ansible-playbook provision-system.yml -i development.ini`. Execution installs all the necessary dependencies to run the Magento and Magento itself.
 3. Add new host binding to `hosts` file
 
    Windows: Run `Notepad` as administrator, open `c:\Windows\System32\Drivers\etc\hosts`
