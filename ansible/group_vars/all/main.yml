@@ -56,8 +56,8 @@ magento2_base_url: "http://{{domain}}"
 magento2_base_url_secure: "https://{{domain}}"
 magento2_use_secure_admin: 0
 magento2_use_secure: 0
-magento2_auth_public_key: "xxxxx"
-magento2_auth_private_key: "xxxxx"
+magento2_auth_public_key: "SET_YOUR_CREDENTIALS_HERE"
+magento2_auth_private_key: "SET_YOUR_CREDENTIALS_HERE"
 
 # Variable for geerlingguy/mysql
 mysql_databases:
