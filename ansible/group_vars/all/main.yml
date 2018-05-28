@@ -1,0 +1,98 @@
+stage: "m4u"
+site_name: "Media4u Workshops"
+mage_admin_password: "password123"
+
+domain: "{{stage}}.magento.local"
+mage_admin_directory: "admin"
+
+production_mode: no
+
+project_path: "/var/www/{{stage}}"
+www_user: "deployer"
+www_group: "www-data"
+www_user_ssh: yes
+
+php_version: "7.1"
+php_packages_extra:
+  - php-mcrypt
+  - php-mysql
+  - php-intl
+  - php-zip
+  - php-pdo
+  - php-soap
+  - php-mbstring
+  - php-bcmath
+  - php-gd
+php_enable_php_fpm: true
+php_xdebug_remote_connect_back: true
+php_xdebug_coverage_enable: false
+php_xdebug_remote_enable: true
+php_xdebug_cli_disable: false
+php_webserver_daemon: "nginx"
+php_memory_limit: "512M"
+php_fpm_pool_user: "{{www_user}}"
+php_fpm_pool_group: "{{www_group}}"
+
+nginx_remove_default_vhost: true
+nginx_vhosts:
+  - listen: "80"
+    server_name: "{{domain}} www.{{domain}}"
+    root: "{{project_path}}"
+    include: "*.conf.sample"
+    template: "{{playbook_dir}}/templates/vhost.j2"
+
+magento2_instance_name: "magento2"
+magento2_version_to_install: "magento-ce-2.2.2"
+magento2_branch: "2.2"
+magento2_default_deployment_mode: "default"
+magento2_install_sample_data: false
+magento2_enable_crons: 0
+magento2_install_path: "{{project_path}}"
+magento2_db_name: "{{stage}}"
+magento2_db_user: "{{stage}}"
+magento2_db_password: "{{stage}}"
+magento2_db_host: "{{groups['database'][0]}}"
+magento2_base_url: "http://{{domain}}"
+magento2_base_url_secure: "https://{{domain}}"
+magento2_use_secure_admin: 0
+magento2_use_secure: 0
+magento2_auth_public_key: "0f071cac7eebb3db0b70710b23c6c94d"
+magento2_auth_private_key: "fda55775a6e3812fa9cac2c39ce4d5c6"
+
+# Variable for geerlingguy/mysql
+mysql_databases:
+  - name: "{{magento2_db_name}}"
+    encoding: "utf8"
+mysql_users:
+  - name: "{{magento2_db_user}}"
+    host: "%"
+    password: "{{magento2_db_password}}"
+    priv: "{{magento2_db_name}}.*:ALL"
+
+
+core_config_data:
+  - {path: "general/store_information/name", value: "{{site_name}}"}
+
+  - {path: "web/unsecure/base_url", value: "{{(webserver_ssl and webserver_ssl_front_unsecure) | ternary('https','http')}}://{{domain}}/"}
+  - {path: "web/secure/base_url", value: "{{(webserver_ssl and webserver_ssl_front_secure) | ternary('https','http')}}://{{domain}}/"}
+  - {path: "web/secure/use_in_frontend", value: "{{(webserver_ssl and webserver_ssl_front_secure) | ternary('1','0')}}"}
+  - {path: "web/secure/use_in_adminhtml", value: "{{(webserver_ssl and webserver_ssl_admin_secure) | ternary('1','0')}}"}
+
+  - {path: "general/country/default", value: "US"}
+  - {path: "general/locale/code", value: "en_US"}
+  - {path: "general/locale/timezone", value: "America/New_York"}
+  - {path: "catalog/price/scope", value: "1"}
+  - {path: "currency/options/base", value: "USD"}
+  - {path: "currency/options/default", value: "USD"}
+  - {path: "currency/options/allow", value: "USD"}
+
+  - {path: "trans_email/ident_general/name", value: "{{site_name}}"}
+  - {path: "trans_email/ident_general/email", value: "noreply@{{domain}}"}
+  - {path: "trans_email/ident_sales/name", value: "{{site_name}}"}
+  - {path: "trans_email/ident_sales/email", value: "noreply@{{domain}}"}
+  - {path: "trans_email/ident_support/name", value: "{{site_name}}"}
+  - {path: "trans_email/ident_support/email", value: "noreply@{{domain}}"}
+  - {path: "trans_email/ident_custom1/name", value: "{{site_name}}"}
+  - {path: "trans_email/ident_custom1/email", value: "noreply@{{domain}}"}
+  - {path: "trans_email/ident_custom2/name", value: "{{site_name}}"}
+  - {path: "trans_email/ident_custom2/email", value: "noreply@{{domain}}"}

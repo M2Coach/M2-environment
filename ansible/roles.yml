@@ -1,0 +1,17 @@
+# Redis
+- src: geerlingguy.redis
+# MySQL Database
+- src: geerlingguy.mysql
+# PHP7
+- src: geerlingguy.php
+- src: geerlingguy.php-xdebug
+- src: geerlingguy.composer
+# NFS
+- src: geerlingguy.nfs
+# Nginx
+- src: geerlingguy.nginx
+
+# Email Service
+
+# Magento 2 installation
+- src: votum.magento2

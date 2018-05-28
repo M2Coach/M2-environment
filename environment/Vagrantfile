@@ -1,0 +1,40 @@
+# Provision Ubuntu based server
+
+Vagrant.configure("2") do |config|
+  config.vm.box = "ubuntu/xenial64"
+  config.vm.network "private_network", ip: "172.16.55.100"
+  config.vm.hostname = "m4u.magento.local"
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 2048
+    v.cpus = 2
+  end
+
+  config.disksize.size = '10GB'
+
+  ssh_pub_key = File.readlines("#{Dir.home}/.ssh/id_rsa.pub").first.strip
+  ssh_priv_key = File.readlines("#{Dir.home}/.ssh/id_rsa").join
+
+  config.vm.provision "file", source: "./basic-setup.yml", destination: "basic-setup.yml"
+  config.vm.provision "file", source: "./nfs-mountd.service", destination: "nfs-mountd.service"
+
+  config.vm.synced_folder "../ansible/", "/ansible"
+
+    config.vm.provision "shell" do |s|
+
+      s.inline = <<-SHELL
+
+        apt-get install -y software-properties-common
+
+        # Latest
+        apt-add-repository -y ppa:ansible/ansible > /dev/null 2>&1
+        apt-get update --quiet
+        apt-get install -y -qq python ansible
+
+        echo "Python, Latest Ansible installed"
+
+        # Run ansible here here
+        ansible-playbook --extra-vars="ssh_priv_key='#{ssh_priv_key}'" --extra-vars="ssh_pub_key='#{ssh_pub_key}'" /home/vagrant/basic-setup.yml
+
+      SHELL
+  end
+end

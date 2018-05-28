@@ -1,0 +1,25 @@
+galaxy_info:
+  author: Matthias Gronwald
+  description: Installs Magento2 e-commerce software
+  company: VOTUM GmbH
+
+  license: MIT
+
+  min_ansible_version: 1.9
+
+  platforms:
+  - name: GenericUNIX
+    versions:
+    - any
+  - name: GenericBSD
+    versions:
+    - any
+  - name: GenericLinux
+    versions:
+    - any
+
+  galaxy_tags:
+    - Magento
+    - Magento2
+
+dependencies: []

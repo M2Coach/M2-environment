@@ -1,0 +1,13 @@
+---
+
+- name: "Post installation: Set deploy mode to dev"
+  shell: >
+    {{ magento2_install_path }}/bin/magento deploy:mode:set developer
+
+- name: "Post installation actions: Reindex"
+  shell: >
+    {{ magento2_install_path }}/bin/magento indexer:reindex
+
+- name: "Post isntallation actions: Clear cache"
+  shell: >
+    {{ magento2_install_path }}/bin/magento cache:clean

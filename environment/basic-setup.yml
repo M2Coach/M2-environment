@@ -1,0 +1,93 @@
+- hosts: localhost
+  connection: local
+  become: yes
+  vars:
+    www_user: deployer
+    www_group: www-data
+    www_path: /var/www
+
+  tasks:
+  - name: Install NFS Server
+    apt:
+      name: "{{item}}"
+      state: present
+    with_items:
+     - nfs-common
+     - nfs-kernel-server
+
+  - name: Add public key to authorized user
+    authorized_key:
+      user: vagrant
+      state: present
+      key: "{{ssh_pub_key}}"
+
+  - name: "Update sys config to fix NFS bug (https://bugs.launchpad.net/ubuntu/+source/nfs-utils/+bug/1590799)"
+    copy:
+      src: "/home/vagrant/nfs-mountd.service"
+      dest: "/lib/systemd/system/nfs-mountd.service"
+
+  - name: Create deployer user with ssh keys
+    user:
+      name: "{{www_user}}"
+      shell: /bin/bash
+      createhome: yes
+      group: "{{www_group}}"
+
+  - name: "Create {{www_user}} ~/.ssh"
+    file:
+      path: "/home/{{www_user}}/.ssh"
+      owner: "{{www_user}}"
+      group: "{{www_group}}"
+      state: directory
+
+  - name: "Copy public key of {{www_user}}"
+    become: true
+    copy:
+      content: "{{ssh_pub_key}}"
+      dest: "/home/{{www_user}}/.ssh/id_rsa.pub"
+      owner: "{{www_user}}"
+      group: "{{www_group}}"
+      mode: 0644
+
+  - name: "Copy private key of {{www_user}}"
+    become: true
+    copy:
+      content: "{{ssh_priv_key}}"
+      dest: "/home/{{www_user}}/.ssh/id_rsa"
+      owner: "{{www_user}}"
+      group: "{{www_group}}"
+      mode: 0600
+
+  - name: "Create WWW dir : {{www_path}}"
+    file:
+      path: "{{www_path}}"
+      owner: "{{www_user}}"
+      group: "{{www_group}}"
+      mode: 0777
+      state: directory
+
+  - name: "Get ID of group {{www_group}}"
+    group:
+      name: "{{www_group}}"
+      state: present
+    register: www_group_facts
+
+  - name: "Get ID of user {{www_user}}"
+    user:
+      name: "{{www_user}}"
+      state: present
+    register: www_user_facts
+
+  - name: Export settings in file
+    lineinfile:
+      dest: /etc/exports
+      regexp: "{{www_path}}"
+      line: '"{{www_path}}" *(rw,sync,all_squash,no_subtree_check,anonuid={{www_user_facts.uid}},anongid={{www_group_facts.gid}})'
+
+  - name: Run export
+    shell: exportfs -a
+
+  - name: Run NFS
+    service:
+      name: nfs-kernel-server
+      state: restarted

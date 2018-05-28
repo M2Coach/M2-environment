@@ -1,0 +1,64 @@
+  - name: Do install dependencies via composer (may take a long time)
+    become: yes
+    become_user: "{{ www_user }}"
+    tags: ['composer','code_deployment']
+    command: composer install
+    args:
+      creates: "{{ project_path }}/composer.lock"
+      chdir: "{{ project_path }}"
+
+  - name: Do update dependencies via composer (may take a long time)
+    become: yes
+    become_user: "{{ www_user }}"
+    tags: ['composer','code_deployment']
+    command: composer update
+    args:
+      removes: "{{ project_path }}/composer.lock"
+      chdir: "{{ project_path }}"
+
+  - name: "Change mage files permissions"
+    become: yes
+    become_user: "{{ www_user }}"
+    tags: ['file_perm','code_deployment']
+    command: "find var vendor pub/static pub/media app/etc -type f -exec chmod g+w {} \\;"
+    args:
+      chdir: "{{ project_path }}"
+
+  - name: "Change mage directories permissions"
+    become: yes
+    tags: ['file_perm','code_deployment']
+    become_user: "{{ www_user }}"
+    command: "find var vendor pub/static pub/media app/etc -type d -exec chmod g+ws {} \\;"
+    args:
+      chdir: "{{ project_path }}"
+
+  - name: "Change mage binary file permission"
+    become: yes
+    tags: ['file_perm','code_deployment']
+    file:
+      dest: "{{ project_path }}/bin/magento"
+      state: file
+      mode: "u=rwx,g=rw,o=r"
+
+  - name: "Change mage binary file permission"
+    tags: ['file_perm','code_deployment']
+    become: yes
+    file:
+      dest: "{{ project_path }}/bin/magento"
+      state: file
+      mode: "u=rwx,g=rw,o=r"
+
+  # Symlink is a workaround bugifx corresponding to:
+  # https://github.com/magento/magento2/issues/2666#issuecomment-249091447
+  # Start of dirty hack
+
+  - name: "Making symlink pub -> pub/pub (bugfix of Magento import)"
+    become: yes
+    tags: ['file_perm','code_deployment']
+    become_user: "{{ www_user }}"
+    file:
+      src: "{{ project_path }}/pub"
+      dest: "{{ project_path }}/pub/pub"
+      state: link
+
+  # End of dirty hack

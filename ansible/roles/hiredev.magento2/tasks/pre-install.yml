@@ -1,0 +1,10 @@
+---
+- name: "Pre-installation: Prepare project dir"
+  become: yes
+  become_user: root
+  file:
+    dest: "{{ project_path }}"
+    state: directory
+    recurse: yes
+    owner: "{{ www_user }}"
+    group: "{{ www_group }}"

@@ -1,0 +1,56 @@
+---
+
+# Update apt on all machines
+- hosts: all
+  become: yes
+  gather_facts: no
+  pre_tasks:
+    - name: 'install python2'
+      raw: sudo apt update && sudo apt -y install python-simplejson
+  tasks:
+    - name: Update apt-get cache
+      apt:
+      update_cache: yes
+
+- hosts: webserver
+  become: yes
+  tags: ['web']
+  roles:
+    - role: geerlingguy.nginx
+    - role: geerlingguy.php-xdebug
+    - role: geerlingguy.composer
+
+- hosts: database
+  become: yes
+  tags: ['db']
+  roles:
+    - role: geerlingguy.mysql
+    - role: geerlingguy.redis
+
+- hosts: application
+  become: yes
+  tags: ['app']
+  pre_tasks:
+    - name: "Pre-installation: Ensure {{www_group}} group exists"
+      become: yes
+      group:
+        name: "{{www_group}}"
+        state: present
+
+    - name: "Pre-installation: Ensure {{www_user}} exists"
+      become: yes
+      tags: ['user']
+      user:
+        name: "{{www_user}}"
+        shell: /bin/bash
+        createhome: yes
+        group: "{{www_group}}"
+  roles:
+    - role: geerlingguy.php-xdebug
+
+- hosts: application
+  become: yes
+  become_user: "{{ www_user }}"
+  tags: ['app']
+  roles:
+    - role: hiredev.magento2
