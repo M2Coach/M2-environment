@@ -43,9 +43,8 @@ nginx_vhosts:
 
 magento2_instance_name: "magento2"
 magento2_version_to_install: "magento-ce-2.2.2"
-magento2_branch: "2.2"
 magento2_default_deployment_mode: "default"
-magento2_install_sample_data: false
+magento2_install_sample_data: true
 magento2_enable_crons: 0
 magento2_install_path: "{{project_path}}"
 magento2_db_name: "{{stage}}"
