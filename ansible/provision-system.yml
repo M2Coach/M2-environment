@@ -53,4 +53,4 @@
   become_user: "{{ www_user }}"
   tags: ['app']
   roles:
-    - role: hiredev.magento2
+    - role: m2coach.magento2
