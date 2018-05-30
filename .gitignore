@@ -1,0 +1,6 @@
+ansible/roles/*
+!ansible/roles/m2coach.*
+environment/*
+!environment/*.yml
+!environment/Vagrantfile
+!environment/nfs-mountd.service
