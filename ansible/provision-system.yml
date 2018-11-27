@@ -10,7 +10,7 @@
   tasks:
     - name: Update apt-get cache
       apt:
-      update_cache: yes
+        update_cache: yes
 
 - hosts: webserver
   become: yes
