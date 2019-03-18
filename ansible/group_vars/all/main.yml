@@ -12,9 +12,9 @@ www_user: "deployer"
 www_group: "www-data"
 www_user_ssh: yes
 
-php_version: "7.1"
+php_version: "7.2"
+php_default_version_debian: "7.2"
 php_packages_extra:
-  - php-mcrypt
   - php-mysql
   - php-intl
   - php-zip
@@ -42,7 +42,7 @@ nginx_vhosts:
     template: "{{playbook_dir}}/templates/vhost.j2"
 
 magento2_instance_name: "magento2"
-magento2_version_to_install: "magento-ce-2.2.2"
+magento2_version_to_install: "magento-ce-2.3.0"
 magento2_default_deployment_mode: "default"
 magento2_install_sample_data: true
 magento2_enable_crons: 0
